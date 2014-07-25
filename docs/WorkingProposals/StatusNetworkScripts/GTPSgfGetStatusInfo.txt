@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+echo "101 loadsgf $1 1000"
+echo "102 final_status_list alive"
+echo "103 final_status_list dead"
+echo "104 final_status_list seki"
+echo "105 final_status_list white_territory"
+echo "106 final_status_list black_territory"
+echo "107 final_status_list dame"

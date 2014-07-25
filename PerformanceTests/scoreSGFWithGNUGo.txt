@@ -1,0 +1,80 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+# @gamesToScore, $outputFilename
+sub scoreGamesWithGnuGo (\@$)
+{
+	my $gamesToScoreRef = shift;
+	my @gamesToScore = @$gamesToScoreRef;
+	my $outputFilename = shift;
+	
+	# Delete the output file if it already exists
+	system("rm -rf $outputFilename") if -e $outputFilename;
+	
+	open OUTPUTFILE, '>', $outputFilename;
+	
+	my $scoringScript = "tempScript.txt";
+	my $scriptOutput = "tempOut.txt";
+	
+	my $gameCount = 0;
+	
+	foreach my $gameFile (@gamesToScore)
+	{
+		# Create the scoring script
+		my $commandID = "10";
+		open SCRIPT, '>', $scoringScript;
+		print SCRIPT "loadsgf $gameFile\n";
+		print SCRIPT "$commandID final_score\n";
+		print SCRIPT "quit\n";
+		close SCRIPT;
+
+		$gameCount++;
+		# Use Tromp-Taylor rules for scoring
+		system("./gnugo.exe --mode gtp --quiet --score aftermath --capture-all-dead --chinese-rules < $scoringScript > $scriptOutput");
+		
+		# Search $scriptOutput for a line matching "=$commandID ([B|W]\+.+)"
+		open SCRIPTOUTPUT, '<', $scriptOutput;
+		my $gnugoResult = "";
+		while(<SCRIPTOUTPUT>)
+		{
+			if ( /^=$commandID ([B|W]\+.+)/ )
+			{
+				$gnugoResult = $1;
+				print OUTPUTFILE "Game $gameCount: $gnugoResult\n";
+				# break out of the while loop
+				last;
+			}
+		}
+		close SCRIPTOUTPUT;
+		
+		# Replace the result in the sgf file with gnugo's score
+		if($gnugoResult =~ /.*/) {
+			my $replacement = "RE[$gnugoResult]";
+			(system("cp $gameFile tempGameFile.sgf") == 0) or die "cp $gameFile tempGameFile.sgf failed: $?\n";
+			open TEMPGAMEFILE, 	'<', "tempGameFile.sgf";
+			system("rm -rf $gameFile");
+		
+			# Use sed for the substitution - couldn't get perl's  s/// to work for this
+			system("sed 's/RE\[.*?\]/$replacement/' tempGameFile.sgf > $gameFile");
+		
+			close TEMPGAMEFILE;
+			system("rm -rf tempGameFile.sgf");
+		}
+	}
+	
+	close OUTPUTFILE;
+	
+	# Tidy up...
+	system("rm -rf $scoringScript");
+	system("rm -rf $scriptOutput");
+
+	return;
+}
+
+my $helpString = "Usage: scoreSGFWithGNUGo.txt <summaryOutputFile> <list of SGF files to score>\n\n";
+
+die "Not enough arguments :$?\n\n$helpString" unless (@ARGV>1);
+
+my @gamesToScore = @ARGV[1..$#ARGV];
+scoreGamesWithGnuGo(@gamesToScore, $ARGV[0]);

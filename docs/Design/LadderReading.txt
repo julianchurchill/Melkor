@@ -1,0 +1,76 @@
+Created: 7/3/5 by Julian Churchill
+Last updated: 12/3/5
+
+********************
+** Ladder Reading **
+********************
+
+ Relevant source code:
+    LadderGoal.cpp/h, MTDFSearch::ladderExpand().
+
+    
+  Ladder Search
+  -------------
+  
+  Target: 1-2 liberty strings, no shared friendly liberties.
+  Goal: Target to have >=3 liberties. Also eval can return ALIVE or DEAD based on reading out
+        of ladder to find blockers, if position is appropriate (to be implemented).
+  Expand Candidates: 
+    Target Colour: Liberties of target string and moves to capture adjacent enemy strings.
+    Enemy Colour:  Liberties of target string.
+
+
+ Ladder Tracing (LadderGoal::traceLadder())
+ --------------
+    
+ Within the ladder search evaluation function, if the ladder string meets the following criteria
+ then a ladder trace will be performed on it to determine the outcome of the ladder without
+ having to perform a deep tree search:
+ 
+    1. Target must have precisely 2 liberties.
+    2. Target must have 1 liberty of order 3 (has 3 liberties of its own) _or_
+       1 liberty of order 2 next to a board edge - see example a) below.
+    3. Target must have 1 liberty of order 2 (has 2 liberties of its own).
+    4. The target's two liberties must be diagonally adjacent to each other.
+    
+ An example of this sub-class of ladder is shown in the diagram below.
+ 
+    ABCDEFGHI       ABCDEFGHI
+ 19 .........    19 .........
+ 18 ..bb.....    18 ..bb.....
+ 17 .bww.....    17 .bww1....
+ 16 ..b......    16 ..b245...
+ 15 .........    15 ...3689..
+ 14 .........    14 ....7....
+    ABCDEFGHI       ABCDEFGHI
+ 
+ This ladder will be traced with the return value being either DEAD or LADDER_ESCAPED. The order of points considered in the
+ ladder trace for the ladder above is shown in the diagram to its right. This order is always used and is oriented relative
+ to the direction of the ladder, for the example above the ladder direction is south east.
+ 
+ A diagonal pair is defined as two stones that lie consecutively in the path of the ladder, along a diagonal route. Examples
+ from the diagram above would be E17/D16, D15/E16, F16/E15, E14/F15. Note: diagonal pairs have a direction that is equal to
+ the order the points are considered in a ladder trace, for instance E17/D16 direction is south west.
+ 
+ The ladder status is determined by five situations considered in order:
+ 
+   1. Two differing coloured stones lie in the path of the ladder as a diagonal pair.
+      a) The inner stone is target coloured - ignore the diagonal pair.
+      b) The inner stone is enemy coloured - change the direction of the ladder to equal the direction of
+         the diagonal pair.
+   3. A target coloured stone may lie in the path of the ladder - a ladder blocker. In which case return LADDER_ESCAPED.
+   4. An enemy stone may lie in the path of the ladder. In which case return DEAD.
+   5. The ladder path hits the board edge - treat like an enemy ladder blocker. Return DEAD.
+   
+ Valid Ladder Examples
+ ---------------------
+
+ a)
+    ABCDEFGHI
+ 19 ......... 
+ 18 ....wb... 
+ 17 .....w... 
+ 16 ......... 
+ 15 ......... 
+ 14 ......... 
+    ABCDEFGHI 

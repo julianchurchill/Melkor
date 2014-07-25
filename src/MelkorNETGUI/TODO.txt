@@ -1,0 +1,152 @@
+TODO File for the GUI for Melkor
+-----------------------------------
+
+Key
+---
+
+	D = Done.
+	P = In Progress.
+	T = Requires testing.
+	B = Feature has a current bug but may be working to some degree.
+	F = Feature had a bug but is now fixed.
+
+Proposed Features
+-----------------
+
+ - Full screen option with ambient lighting and lovely 3D board and stones... hmmm...
+ 	- See http://sunxi.free.fr/
+
+ - Joseki dictionary (http://waterfire.us/joseki.htm).	
+ - Client mode for connection to Go servers (KGS, NNGS, IGS).
+ - Automated play on KGS and BoardSpace http://www.boardspace.net/english/
+ 	- Can only connect to KGS via a Java program that runs the connectee. This GUI
+ 	  must have a command line switch (-kgs) to run in KGS mode where it pipes all
+ 	  stdin to the DLL's stdin and all stdout from the DLL to the GUI's stdout. This
+ 	  is for GTP comms.
+ 	  - On top of that the GUI can then run a thread to ask the DLL it's status on
+ 	    KGS so it can display a game as it's being played or just inform the user
+ 	    if Melkor is waiting for a game etc...
+ 	
+ - Help files.
+ - Walkthrough Go Tutorial.
+ - Built in web links (Sensei's Library: http://senseis.xmp.net/).
+ 
+ - Multi-platform...
+ - Windows CE version for handhelds - SmartPhone too?
+ 	
+Todo
+----
+
+ - Design documentation: 
+ 	- UML Use cases.
+ 	- UML Class diagrams.
+
+B - About box - Use DllGetVersionString() to get the current version of Melkor.
+	- Text won't show up after the appending the version string...
+B - Keep captured stones text boxes updated.
+		- BUG: Updating the computers capture count doesn't happen until after
+				a human move, could be a threads problem.
+B - When a loss on time is incurred the menu items and buttons don't become available again!
+B - Timer doesn't stop when a game is ended by loading an SGF.
+ 
+ - Dead stones at the end of the game should be added on to the captured totals in the GUI.
+  
+ - Update main window title with saved sgf filename.
+ - Use previously saved sgf filename for 'save' menu item.
+
+ - Add SGF branched tree handling to Melkor and GUI.
+ - Add SGF editing.
+ 	- Add comment editing as a priority to aid with debugging/testing.
+ 	- Stop user adding stones without save check dialog first after playing a game.
+
+ - Add DLL output window (like the log window) so we can monitor the move choice process.
+ 	 
+ - Stop user doing new dialog without save check dialog first.
+ 
+ - Separate MelkorNETGUI as a CVS module?
+
+ - Persistent settings.
+T	- Between calls to dialogs (make program scope variables).
+	- Between runs of the program (ini file?).	
+
+P - Add menu item/dialog Customise... Items:
+ 	- View/Hide GTP panel.
+ 	- Start/stop logging debug output <filename>
+
+P - Add 'Player' top-level menu. Add 'New Player...', 'Change Player...' items to allow the backend
+    to identify the person it's playing and use per-player evaluation NNs (future feature).
+ - Link to DllChangePlayer(string), DLLGetPlayerList().
+ 
+ - Stone clicking sound when stones are placed.
+ - Make panels in MelkorNET GUI dockable using DockSuite.
+
+ - Remove 'use global move function' and 'use neural network' from settings dialog. These
+   should always be used for the future product. Also remove Options|Load Neural Network
+   menu item for the same reasons.
+ 
+ - Need stop 'thinking' button to return immediate result from Melkor.
+ 	- Add interrupt feature to Melkor to allow this.
+ 
+ - Add ladder search depth numeric control to GUI and interface through DLL.
+ 
+Done
+----
+
+ Version 0.5
+ -----------
+
+ Version 0.4a
+ ------------
+
+ F - For board mouse clicks the click must start on the board and finish on it otherwise
+     we'll pick up clicks from all over the place - such as double clicking the title to maximise.
+ B - The search settings dialog crashes sometimes when opening, after having previously been opened.
+ F - When updating component values, DLL was returning large, but valid values for timePerMove.
+     These were out of bounds for the dialog. Dialog is now persistent so only has to get the initial
+     values for the components rather than updating every time we see the dialog.
+ F - When main window is resized so that the board size is less than one pixel it crashes
+	- Fix is to skip board drawing when client size is 0 or less, do this.
+
+ D - For end of game use DllFinalScore().
+ D - Pressing the score button should always use DllFinalScore() unless in the middle
+     of a game in which case use DllScoreBoard().
+ D - Pressing the score button should put up a score value in the game information panel.
+ D - Player names should be sent to MelkorDLL when new game is started.
+ D - Result string is now relayed to MelkorDLL when endGame() is run.
+ D - Added SGF writing.
+ D - Press the score button a second time to clear the territory markers and faded
+     dead stones.
+ D - Made timePerMove default to 10 seconds to avoid impatience from the user!
+ D - Made dynamic search depth the default.
+ D - GUI updated so we can step back and forward in a game after playing it.
+
+ D - Implemented score button, see scoreBoard() function.
+ D - Added dynamic search depth option to search settings dialog.
+     Linked to DllGetUseDynamicSearchDepth().
+ D - Use DllLogStart(filename) / DllLogStop() functions from DLL.
+ D - Added CTRL-N shortcut for new game and CTRL-L for log window toggling.
+
+ D - Add time controls to GUI + Melkor, different time systems inc. byo-yomi.
+ D - Add time controls and inform Melkor of initial time settings.
+ D - Start timer thread to keep time for each player and update GUI.
+ D - When the time is up end the game.
+ D - Update Melkor with current time available at each turn.
+ D - Add checkbox to select/deselect using a time limit.
+
+ D - Add time per move to GUI + Melkor.
+ D - Link into alpha-beta calls so MTDFSearch uses the same startTime to allow mid game tree search interruptions.
+ D - Make timing routines OS independent.
+ D - Link into GUI - use DllSetTimePerMove(int timePerMove).
+
+ D - GUI: End of game after both players pass.
+ D - GUI: Display territory/score and dead stones.
+ D - Freeze board.
+ D		- Show territory in GUI.
+ D		- Write territory_black, territory_white dll functions.
+ D 		- Fade dead strings in GUI
+ D		- Reset the drawFadedStones array after each move.
+ D		- Write dead_black_stones, dead_white_stones, dll functions.
+
+ D - GUI: Add a stone image of each colour instead of black|white labels to game info
+ 		panel and fade the one who's turn it isn't!
+ D - GUI: Add coord text around board.

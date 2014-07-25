@@ -1,0 +1,43 @@
+Created: 27/2/5 by Julian Churchill
+Last updated: 27/2/5
+
+Overview of Neural Network classes
+----------------------------------
+
+ There are several types of NN class:
+ 
+ 1. Network type:
+   
+   a. NeuralNetwork - An interface that provides functions that allow use of the network,
+      i.e. load(), save() and getAnswer(). getAnswer() takes a matrix of floats as input to 
+      the network and runs a single forward propagation through the network. The output must
+      be read from the network object by a network type-specific method (for BPNs you can 
+      access the output via the getOutputs() function).
+   b. BPN - Extends NeuralNetwork and will generally be the base class for most forward 
+      propagation based neural network classes. Provides definitions of weights, outputs, 
+      activation functions amongst other things.
+   c. RBF and CN - two examples of NN types extended from BPN. RBF is a Radial Basis Function
+      implementation and CN is a Competitive Network definition based on PhD work by Adrian Cook.
+ 
+ 2. Go adapter classes - These provide the functions necessary to allow a NN class of type 1 to 
+    translate between matrix<float> input and a Go board.
+    
+    a. BPNGoAdapterInterface - An interface that provides functions to translate from a Go board
+       to native NN input and back. The function getInput() translates from a Go board to NN
+       input.
+       
+ 3. Trainer classes - These provide the nitty-gritty training algorithm hardcore code.
+ 
+   a. BPNTrainer - An interface that provides function definitions to allow weight updates
+      based on training input and output pairs. In particular see trainPattern() which trains
+      the network on a single input/output pair. Other functions such as train() and 
+      trainAndTime() call trainPattern() repeatedly over a given training set until some
+      termination condition is achieved.
+      
+ 4. Go trainer classes - These provide functions to extract training data from a source of 
+    sgf files and convert it into a database of input/output pairs in NN native format. They
+    use an associated go adapter class getInput() for translation.
+    
+    a. BPNGoTrainerInterface - An interface to provide functions to extract training data from
+       a set of sgf files and output a database of NN native format input/output pairs ready
+       to be used by a trainer class to train the network.

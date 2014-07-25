@@ -1,0 +1,54 @@
+<project version="Crimson Editor 3.60">
+	<category name="Design" expanded="yes">
+		<localfile path="D:\Code\Melkor\docs\Design\EyeSpacePatternMatcher.txt" />
+		<localfile path="D:\Code\Melkor\docs\Design\GlobalMoveFunction.txt" />
+		<localfile path="D:\Code\Melkor\docs\Design\LadderReading.txt" />
+	</category>
+	<category name="GUI" expanded="no">
+		<localfile path="D:\Code\Melkor\src\MelkorNETGUI\TODO.txt" />
+	</category>
+	<category name="Backend" expanded="yes">
+		<localfile path="D:\Code\Melkor\src\Melkor\ChangeLog.txt" />
+		<localfile path="D:\Code\Melkor\src\Melkor\TODO.txt" />
+	</category>
+	<category name="kgsGtp" expanded="no">
+		<localfile path="D:\Code\Melkor\kgsGtp\config.txt" />
+		<localfile path="D:\Code\Melkor\kgsGtp\kgsGtp.xhtml" />
+		<localfile path="D:\Code\Melkor\kgsGtp\runKgsGtp.txt" />
+	</category>
+	<category name="WorkingProposals" expanded="no">
+		<category name="StatusNetwork" expanded="no">
+			<localfile path="D:\Code\Melkor\Docs\WorkingProposals\StatusNetworkScripts\generateSafetyTrainingData.txt" />
+			<localfile path="D:\Code\Melkor\Docs\WorkingProposals\StatusNetworkScripts\GTPSgfGetStatusInfo.txt" />
+		</category>
+		<localfile path="D:\Code\Melkor\Docs\WorkingProposals\StatusNetwork.txt" />
+	</category>
+	<category name="Profiling" expanded="no">
+		<localfile path="D:\Code\Melkor\src\Melkor\Release\Melkor.map" />
+		<localfile path="D:\Code\Melkor\src\Melkor\ProfilingLogs\MinimaxTestResults-Profiled.txt" />
+		<localfile path="D:\Code\Melkor\src\Melkor\ProfilingLogs\pl03xxx25-02-05.txt" />
+		<localfile path="D:\Code\Melkor\src\Melkor\ProfilingLogs\pl04xxx26-02-05-updateStrings.txt" />
+	</category>
+	<category name="Howto" expanded="no">
+		<localfile path="D:\Code\Melkor\docs\Howto\AddANewGoalClass.txt" />
+		<localfile path="D:\Code\Melkor\Docs\Howto\AddANNTrainingAlgorithm.txt" />
+	</category>
+	<category name="PerformanceTests" expanded="yes">
+		<category name="vsGnuGo3.4" expanded="yes">
+			<localfile path="D:\Code\Melkor\PerformanceTests\vsGnuGo3.4\playgo9x9" />
+			<localfile path="D:\Code\Melkor\PerformanceTests\vsGnuGo3.4\games\GlobalMoveFunction\resultsTable.txt" />
+		</category>
+		<localfile path="D:\Code\Melkor\PerformanceTests\generateResultsTable.txt" />
+		<localfile path="D:\Code\Melkor\PerformanceTests\scoreSGFWithGNUGo.txt" />
+		<localfile path="D:\Code\Melkor\PerformanceTests\SGFToGTPScript.txt" />
+	</category>
+	<localfile path="D:\Code\Melkor\Docs\OverviewNeuralNetwork.txt" />
+	<localfile path="D:\Code\Melkor\Docs\Project Specification.txt" />
+	<localfile path="D:\Code\Melkor\readme.txt" />
+	<localfile path="D:\Code\Melkor\docs\UnitTestingPolicy.txt" />
+</project>
+
+<workspace version="Crimson Editor 3.60">
+	<localfile path="D:\PhDFiles\Docs\Thesis\ChaptersStatus.txt" linenum="1" placement="2:3:-1:-1:-4:-23:0:0:822:457" />
+</workspace>
+

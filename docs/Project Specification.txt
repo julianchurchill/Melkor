@@ -1,0 +1,26 @@
+Created: 21/2/5 by Julian Churchill
+Last updated: 21/2/5
+
+ Project Specification - Melkor
+ ------------------------------
+ 
+ A computer program with multiple primary functions, specifically:
+ 
+   a) The user should be able to play a complete game of Go against
+      the program through the GUI and receive an accurate evaluation
+      of the outcome of the game from the program.
+      
+   b) The user should be able to navigate and edit standard Go game
+      record file formats in the GUI, specifically including:
+      
+        i) SGF [FF4.0]
+        
+   c) The program should be able to act as a fully functioning client
+      for at least the following Internet Go Servers:
+      
+        i) IGS
+       ii) NNGS
+      iii) KGS (dependent on protocol availability)
+      
+   d) The user should be able to use mechanisms provided by the program
+      to analyse board positions at any point during a), b) or c).

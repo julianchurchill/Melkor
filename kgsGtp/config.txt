@@ -1,0 +1,10 @@
+verbose=t
+engine=./Melkor.exe -verbose -mode gtp -quiet -network ./newBPN9-7x7-optimum1.bpn -useGlobalMoveFunction -logfile kgsLog.txt
+name=MelkorBot
+password=melkor4321
+room=Beginner's Room
+open=t
+talk=I'm a computer program who cannot talk, you can contact the writer here if you wish: melkorbot@yahoo.co.uk. I'm shiny and new so please forgive my inexperience - if you have a bad game come back another time and hopefully I'll be fixed up and better than ever!
+rules=chinese
+rules.boardSize=9
+rules.time=10:00+25/5:00

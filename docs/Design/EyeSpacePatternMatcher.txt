@@ -1,0 +1,67 @@
+Created: 12/3/5 by Julian Churchill
+Last updated: 12/3/5
+
+**************************************
+** Eye-Space Pattern Matcher (ESPM) **
+**************************************
+
+ Relevant source code:
+    LifeAndDeathGoal.cpp/h, Patterns\*.*.
+    Currently the eye space pattern matcher object is held in Melkor. This should be moved
+    to LifeAndDeathGoal and kept as a static object.
+
+ This module is based largely on GNUGo3.4's pattern matching module. The eye shape patterns are
+held in a text file called EyeShape.pat in the Patterns\ directory. The format closely follows 
+the GNUGo format and is summarised in EyeShape.pat for easy reference.
+
+ Purpose
+ -------
+
+ The purpose of this module is to detect the life and death status of some stones without having
+to go through an exhaustive tree search. Many obvious life and death sequence involving eye spaces
+can be >10 moves long. An exhaustive search of >5 moves is nowhere near practical with todays
+hardware, therefore this 'shortcut' is essential for constructing a useful life and death search.
+
+ Pattern Matching
+ ----------------
+
+ The patterns are matched to distinct eye spaces - continuous areas of empty space (or possibly
+dead enemy stones) that have potential for the associated friendly stones to create eyes within.
+It is upto the user of the ESPM to define the eye spaces.
+
+ Each pattern can be matched in a number of ways thanks to the use of wildcards representing
+multiple board point states. If a pattern matches then 2 numbers are returned which are relevant
+to any friendly stones that matched in that pattern. The 2 numbers represent:
+
+   i) The number of eyes the friendly stones can achieve if they play first.
+  ii) The number of eyes the friendly stones can achieve if the opponent plays first.
+  
+ From these values we can deduce whether the status is ALIVE, DEAD or URGENT. 2 eyes are required
+for life, any less and the stones can be captured, greater than 2 eyes are equivalent to 2 eyes.
+For example if a pattern matches and returns:
+   i)=2, ii)=2 then status = ALIVE
+   i)=2, ii)=0|1 then status = URGENT
+   i)=0|1, ii)=? then status = DEAD
+
+ PM Efficiency
+ -------------
+ 
+ To maintain search efficiency as much as possible a pattern tree is constructed from the database
+based on the patterns being matched with a particular 'Orderer' class. This dictates the order
+in which board points are considered. A spiral orderer starting from a central point within the
+search area has been found various researchers to be an efficient search order.
+
+ The tree allows us to search the whole pattern database in one traversal rather than matching 
+individual patterns one at a time.
+   
+ Using The ESPM With LifeAndDeathGoal
+ ------------------------------------
+   
+ If an urgent point is specified in the pattern ('*') then:
+     if we're next to play or friendly stone is at the urgent point
+        count the eyes possible from i).
+     else
+        count the eyes possible from ii).
+
+ The LifeAndDeathGoal must total up the possible number of eyes for an eye space based on the
+patterns that match it and alternating play - much like a minimax search.

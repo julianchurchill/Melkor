@@ -1,0 +1,51 @@
+; A list of exportable functions that other applications can call
+; Note: Exported functions should use _stdcall to make sure we
+;       have matching function calling conventions.
+
+EXPORTS
+	initDll
+	cleanupDll
+	DllGetName
+	DllGetBoard
+	DllSetBoardSize
+	DllGetBoardSize
+	DllPlayMove
+	DllGenerateMove
+	DllUndo
+	DllGetScoredPoints
+	DllSaveSGF
+	DllLoadSGF
+	DllLoadNeuralNetwork
+	DllBackSGF
+	DllNextSGF
+	DllGetLastMove
+	DllGetVersionString
+	DllSetVerbose
+	DllGetStatusDepth
+	DllSetStatusDepth
+	DllGetUseDynamicSearchDepth
+	DllSetUseDynamicSearchDepth
+	DllGetUseGlobalMoveFunction
+	DllSetUseGlobalMoveFunction
+	DllSetKomi
+	DllSetHandicap
+	DllGetTimePerMove
+	DllSetTimePerMove
+	DllSetTimeSettings
+	DllSetCurrentTimeSettingsBlack
+	DllSetCurrentTimeSettingsWhite
+	DllPlayTimedGame
+	DllSetBlackName
+	DllSetWhiteName
+	DllSetSGFResultString
+	DllGetCapturedBlackStones
+	DllGetCapturedWhiteStones
+	DllGetTerritoryBlack
+	DllGetTerritoryWhite
+	DllGetDeadStonesBlack
+	DllGetDeadStonesWhite
+	DllGetDeadStones
+	DllScoreBoard
+	DllFinalScore
+	DllLogStart
+	DllLogStop

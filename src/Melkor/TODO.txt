@@ -1,0 +1,180 @@
+TODO File for the Backend to Melkor
+-----------------------------------
+
+Key
+---
+
+	D = Done.
+	P = In Progress.
+	T = Requires testing.
+	Q = Performance query.
+	GMF = Concerning the Global Move Function, the process by which we determine the
+	      best available move under normal game conditions. Entry point is 
+	      Melkor::getBestGlobalMove().
+
+ Note: The version number of Melkor is updated as #defines in Melkor.h.
+	
+Proposed Features
+-----------------
+
+ - Eye shape pattern matcher (ESPM) to make status searches better.
+   - See docs/Design/EyeSpacePatternMatcher.txt.
+ - Group tactics (rather than strings, a higher level of abstraction).
+
+ - MelkorALS - New CVS branch which swaps an influence/territory based evaluation for a 
+   TD-NN based evaluation function. After each game it plays it learns from it - giving
+   the user a constantly adapting player!
+   	- Use DllChangePlayer() to swap between players.
+   	- Player Biased Networks (PBN).
+   	  - Focusses on providing a bias for a section of the GMF. E.g. a big move PBN.
+   	    The PBNs should be trained after each game, on the game record and against a
+   	    particular opponent. Each opponent has a unique PBN.
+   	
+ - Look at recurrent networks to get a better move predictor, since recurrent nets base
+   their output on the input and previous input... May be useful to pick up gote/sente,
+   urgency?
+
+ - PN-Search for status, life/death searches.
+ 
+ - Implement pondering - Melkor thinks while it's the other players turn.
+
+Optimisation
+------------
+
+ I can't see where we can practically optimise this program anymore... but I'm convinced it can run faster
+if only for the fact that other tree search programs run at 10* the nodes/sec Melkor does...?!?
+
+ Potential bottlenecks: Go::isLegal(), BPN::getAnswer(), Node() and Node::operator=, MTDFSearch::getChildNode(),
+   GoString::operator=, GoString::containsPoint(), BoardStruct::updateStrings(), BoardStruct::operator=
+     
+ Improvements:
+   - Reduce calls to BoardStruct= and GoString= (via BoardStruct=).
+   - Reduce calls to GoString::containsPoint().
+   - BoardStruct::updateStrings() algorithm redesign.
+   - Pointers to and hash table for GoStrings in BoardStruct - see #define USE_GOSTRINGPTRS
+   	 - Go::isLegal() use lots of getString() calls, would benefit from pointer table to strings.
+   - If not above, then an ordered list of GoStrings and Points in GoString for quicker finding.
+ 
+Todo
+----
+
+ - Design documentation: 
+D 	- Product specification.
+P 	- UML Use cases.
+P 	- Program flow diagrams for use cases.
+P 	- UML Class diagrams.
+    - Need a document detailing the contents of MTDFSearch and related functionality. Covers
+      Minimax search algorithm and variants/extension.
+    - Coding conventions to adopt.
+
+P - Status estimating ANN - equates to a human players glancing approximation of a board state.
+ 	- Refinement of this estimate can be made if necessary through game tree search.
+ 	- See thesis Chapter 6 - 6.3.3 Safety Estimating Networks
+* 	- See StatusNetwork.txt in the design directory.
+
+P - Go through MelkorDLL.cpp and make sure we are accessing the innards only through melkor.
+   Any direct references to Go or gtp should be accessed through a Melkor dummy function. This
+   centralises everything to make sure the whole DLL is updated properly.
+ 
+ - Update Melkor::playGo() so that the text menu entry route uses getBestGlobalMove().
+
+ - Unit testing - see docs/UnitTestingPolicy.txt
+   - Critical tests to be written:
+     - Neural network function - BPN.
+P    - MoveSuggester derived classes, AllLegalSuggester, LadderSuggester etc...
+       - Convert Test::ladderTest().
+     - Old test no. 7 AlphaBetaTest - using Alpha-Beta search without a Go board.
+       - Convert to unit test for MTDFSearch.
+ 
+ - Refactor MTDFSearch::alphaBetaWithMemory(). 
+   - Extract bestMoveFirst and ETC functions. 
+
+ - Consider making Melkor static since we only _ever_ have on instance of it - and it's lifetime
+   is the programs lifetime.
+       
+ - Fix performance tests.
+   - No. 4 SGFStepThrough Test - tests sgf functionality.
+   
+ - Automatically calibrate 1-ply search time constants by running some searches for
+   each type and averaging the time. Do at start up.
+   
+ - Refine Melkor::exchangeUrgentStrings() to order the strings it removes according to their worth.
+
+P - Develop LinkedList to replace volatile vector<> v in hash_set.
+    - Partially done, see code in hash_set(). Needs a rethink.
+
+P - New branch - Morgoth-0-52-ESPM
+ - Develop eye-space pattern matcher (ESPM) to improve full tactical searches. Should 
+   effectively give upto depth 12 (for 5-star eye-shape) selective search extension.
+   - See docs/Design/EyeSpacePatternMatcher.txt.
+   - Write unit tests:
+D    - SpiralOrderer.
+D    - TreeNode.
+D     - Tree.
+P     - Pattern. Symmetries, getPoint(), load, save.
+     - EyeShapePattern. A subclass of Pattern restricted to eye shape patterns.
+     - PatternTreeNode. Holds a matching PatternPoint value and if a leaf, a Pattern derivative.
+       - Test equality based on the PatternPoint.
+     - Tree using PatternTreeNodes with EyeShapePatterns as leaves. Traversing, inserting.
+     - Pattern matcher. makePatternTree(), match().
+ - Use ESPM in LifeAndDeathGoal. Need a group as the search target along with an object containing
+   information about the groups on the initial board.
+   - A reference to an ESPM should be passed to the LifeAndDeathGoal upon creation. The ESPM
+     should be kept in the Melkor object. Or we could keep the ESPM as a static member of the
+     LifeAndDeathGoal, which is better?
+   - The current eye spaces for the target can be calculated when LifeAndDeathGoal.evaluate()
+     is called, perhaps using a flood fill.
+     - What about dead stones in eye spaces, especially ones that we don't know are dead yet?
+   - Attempt to determine the minimum/maximum number of eyes per distinct eye space.
+     - _Empty_ eye spaces of size >5 can always have 2 eyes.
+     - For other eye spaces use the ESPM to match against each empty or enemy point in the eye 
+       space, stopping at the first match per eye space. Note the min/max number of eyes possible
+       in this space, bearing in mind who is next to play.
+
+ - Group tactics
+   - New group class
+     - Anchor stones for component strings.
+     - List of status-sensitive points per string - if any change state this invalidates the
+       strings last status search so it must be run again. Better than the current 
+       Melkor::selectChangedStrings() method. These points can be found after the status search
+       is conducted.
+     - Current group status value - DEAD (minimum eyes <2), UNKNOWN, ALIVE (maximum eyes >=2).
+     - Minimum eyes, maximum eyes - UNKNOWN, 0, 1, >=2.
+   - Identify groups by connection search.
+     - Write Melkor::updateGroupConnections().
+     - Write Test::groupConnectionTest().
+   - Group status incremental updating.
+     - Write Melkor::updateGroupsStatus() - analog to updateStringsStatus() but for groups.
+       - Runs updateStringsStatus() on each string that requires an update in the group.
+       - Recalculates the number of eyes of the group and therefore the status of the group
+         using LifeAndDeathGoal with ESPM.
+     - Write Test::groupStatusTest().
+   - How do we get the full tactical search to work on groups?
+     - A goal that works like full tactical search - but for groups rather than strings.
+       - Can be used after we've identified urgent strings, to refine the best urgent sequence,
+         which atm only focuses on increasing the liberties of the string itself - generated
+         by one of ladder/loose tactical/full tactical search.
+       - The tactical searches for strings are only really useful for status updates. 
+         Determining the best move sequences will require multiple goals - rather than 
+         ALIVE/DEAD/liberty count.
+
+ - Incorporate Computer Go Test Collection as a regression testing tool.   
+   
+ - Add SGF editing.
+ 	- Add comment editing as a priority to aid with debugging/testing.
+ 	- Stop user adding stones without save check dialog first after playing a game.
+ - Add SGF branched tree handling to Melkor and GUI.
+  
+ - Get KGS connection working fully.
+ 	- Implement kgs-time_settings. See kgsGtp for details.
+
+ - Add DllChangePlayer(string) to DLL. Do nothing for the minute but should load up appropriate
+     network(s) for the player or create a new one if doesn't already exist. (ALS)
+   - Also add DLLGetPlayerList() to get the available player names.
+
+ - Write a Melkor::idleTime() function to be called to do house-keeping. Must be interruptable.
+   Should be called while waiting for the opponents to play. Called pondering.
+
+ - Perf test to check move generation works ok.
+ 	- No Ko, no passing. Check tree size and leaf nodes for blank 5x5 and 9x9.
+ 	- Get correct values for number of leaf nodes from comp-go mailing list. 

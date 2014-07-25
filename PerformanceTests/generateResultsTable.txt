@@ -1,0 +1,87 @@
+#!/usr/bin/perl -w
+
+# A perl script to generate a results table from a directory of summaries
+
+my $helpString = "Usage: generateResultsTable.txt <directory>";
+
+die "$helpString\n" unless (@ARGV == 1);
+
+chdir $ARGV[0] or die "ERROR: Couldn't chdir to $ARGV[0]: $?\n";
+
+my @files = glob('*-summary.txt');
+
+# Get a list of the test types
+my %testTypes;
+
+foreach my $file (@files) {
+	# Get the test type and add to the hash if it's not already there
+	$file =~ /(.+)-summary.txt/;
+
+	# Add the key (can only do once with a hash so this is safe)
+	$testTypes{$1}= 1;
+}
+
+# Remove old results table
+my $resultsTable = "resultsTable.txt";
+system("rm -rf $resultsTable") if -e $resultsTable;
+
+# Create a new results table
+open OUTFILE, '>', $resultsTable;
+
+# Write a header for the results table
+print OUTFILE "GMF_Version\tAverage_Score\n";
+
+# Deal with one version at a time
+foreach my $file (@files)
+{
+	# Output the GMF version
+	my $type;
+	if( $file =~ /(.+)-summary.txt/ ) { $type = $1; }
+	print OUTFILE "$type\t";
+	
+	# If the file exists get the average and print it to the output file	
+	if ( -e $file ) {
+		print OUTFILE getScoreAverageFromFile($file);
+	}
+	
+	# Print a new line
+	print OUTFILE "\n";
+}
+
+close OUTFILE;
+
+# Read a file containing "Game n: 0 B+17.5" type lines
+# and return the average of the scores from blacks point of view
+sub getScoreAverageFromFile
+{
+	my $file = shift;
+
+	open INFILE, $file;
+
+#	print "Opening $file\n";
+		
+	my $total = 0;
+	my $count = 0;
+	
+	# Read a line at a time
+	while (<INFILE>) {
+		# If the line starts with "Game n:" read the following scores
+		if (/Game \d+: .*([B|W])\+(.+)\s/) {
+#			print "\$1 = $1\n";
+#			print "\$2 = $2\n";
+			my $score = $2;
+			my $colour = $1;
+			# Calculate average from Blacks point of view
+			$total = $total + $score if ( $colour =~ /B/ );
+			$total = $total - $score if ( $colour =~ /W/ );
+			$count++;
+		}
+	}
+	# Convert all scores to be from B point of view
+	# then average and return
+#	print "\$total = $total, \$count = $count\n";
+	
+	return 0 if ($count == 0);
+	
+	return ($total/$count);
+}

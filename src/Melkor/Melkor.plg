@@ -1,0 +1,101 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Melkor - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "D:\DOCUME~1\JULIAN~1\LOCALS~1\Temp\RSPD5.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GR /GX /ZI /Od /I "./" /I "./Goal" /I "./NeuralNetwork" /I "./Patterns" /I "./SGF" /I "./Util" /I "./Test" /I "./Test/Util" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/Melkor.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Data\Code\Melkor\src\Melkor\Patterns\Pattern.cpp"
+]
+Creating command line "cl.exe @D:\DOCUME~1\JULIAN~1\LOCALS~1\Temp\RSPD5.tmp" 
+Creating temporary file "D:\DOCUME~1\JULIAN~1\LOCALS~1\Temp\RSPD6.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib cppunitd.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/Melkor.pdb" /debug /machine:I386 /out:"Debug/Melkor.exe" /pdbtype:sept 
+.\Goal\Debug\CaptureGoal.obj
+.\Goal\Debug\InfluenceGoal.obj
+.\Goal\Debug\LadderGoal.obj
+.\Goal\Debug\LibCountCaptureGoal.obj
+.\Goal\Debug\LibertyCountGoal.obj
+.\Goal\Debug\LifeDeathGoal.obj
+.\Goal\Debug\LooseTacticalGoal.obj
+.\Goal\Debug\StoneCountGoal.obj
+.\NeuralNetwork\Debug\BPN.obj
+.\NeuralNetwork\Debug\BPNExpAct.obj
+.\NeuralNetwork\Debug\BPNGoAdapter.obj
+.\NeuralNetwork\Debug\BPNGoAdapterInterface.obj
+.\NeuralNetwork\Debug\BPNTrainer.obj
+.\NeuralNetwork\Debug\CN.obj
+.\NeuralNetwork\Debug\NeuralNetwork.obj
+.\NeuralNetwork\Debug\newBPN10GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN11GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN12GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN2GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN3GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN4GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN5GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN6GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN7GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN8GoAdapter.obj
+.\NeuralNetwork\Debug\newBPN9GoAdapter.obj
+.\NeuralNetwork\Debug\newBPNGoAdapter.obj
+.\NeuralNetwork\Debug\NNDatabase.obj
+.\NeuralNetwork\Debug\RBF.obj
+.\NeuralNetwork\Debug\RPROPBPNTrainer.obj
+.\NeuralNetwork\Debug\Safety1BPNGoAdapter.obj
+.\NeuralNetwork\Debug\Urgency1GoAdapter.obj
+.\NeuralNetwork\Debug\Urgency3BPN.obj
+.\SGF\Debug\SGFGameInfo.obj
+.\SGF\Debug\SGFNode.obj
+.\SGF\Debug\SGFProperty.obj
+.\SGF\Debug\SGFReader.obj
+.\SGF\Debug\SGFTree.obj
+.\SGF\Debug\SGFWriter.obj
+.\Util\Debug\BoardStruct.obj
+.\Util\Debug\Go.obj
+.\Util\Debug\GoString.obj
+.\Util\Debug\Misc.obj
+.\Util\Debug\Move.obj
+.\Util\Debug\Rect.obj
+.\Debug\BoardStructTest.obj
+.\Debug\GoStringTest.obj
+.\Test\Debug\GoTest.obj
+.\Debug\LinkedListTest.obj
+.\Debug\TreeNodeTest.obj
+.\Debug\GoalInterfaceTest.obj
+.\Debug\PatternTest.obj
+.\Debug\SpiralOrdererTest.obj
+.\Debug\AllLegalSuggesterTest.obj
+.\Debug\LadderExtensionTest.obj
+.\Debug\Pattern.obj
+.\Debug\AllLegalSuggester.obj
+.\Debug\CaptureSuggester.obj
+.\Debug\GeneralSuggester.obj
+.\Debug\GTPFunctions.obj
+.\Debug\LadderSuggester.obj
+.\Debug\LogWriter.obj
+.\Debug\LooseTacticalSuggester.obj
+.\Debug\Main.obj
+.\Debug\Melkor.obj
+.\Debug\MTDFSearch.obj
+.\Debug\Node.obj
+.\Debug\SearchSettings.obj
+.\Debug\Test.obj
+]
+Creating command line "link.exe @D:\DOCUME~1\JULIAN~1\LOCALS~1\Temp\RSPD6.tmp"
+<h3>Output Window</h3>
+Compiling...
+Pattern.cpp
+D:\Data\Code\Melkor\src\Melkor\Patterns\Pattern.cpp(67) : fatal error C1189: #error :  todo
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+Melkor.exe - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

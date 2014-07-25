@@ -1,0 +1,109 @@
+#!/usr/bin/perl -w
+
+# Convert an SGF file to a gtp script with the moves included for one colour
+# and a sequence of 'genmove colour' for the other colour
+
+use strict;
+
+my $helpString = "Usage: SGFToGTPScript.txt <include moves for colour [b|w]> <sgf filename>";
+
+die "$helpString\n" unless (@ARGV == 2);
+
+my $colour;
+if ( $ARGV[0] =~ /^b$/) { $colour = "black"; }
+elsif ( $ARGV[0] =~ /^w$/) { $colour = "white"; }
+else { die "Bad colour, use [b|w]\n"; }
+
+my $sgfFilename = $ARGV[1];
+open SGFINPUT, '<', $sgfFilename;
+
+# Get boardsize and output 'boardsize <size>' gtp command
+my $boardsize = 9;
+# Get komi and output 'komi <komi>' gtp command
+my $komi = 5.5;
+
+while(<SGFINPUT>)
+{
+	if( /SZ\[(.+?)\]/ ) { $boardsize = $1; }
+	if( /KM\[(.+?)\]/ ) { $komi = $1; }
+}
+
+print "boardsize $boardsize\n";
+print "komi $komi\n";
+
+close SGFINPUT;
+
+open SGFINPUT, '<', $sgfFilename;
+
+# Read a line at a time into $_, until EOF
+while(<SGFINPUT>) 
+{
+	# Match all B[] or W[] depending on what colour is to be preserved - non-greedy
+	# Keep matching until no more matches in this line
+#	print "\$_ = ", $_, "\n";
+	if ( /(B\[..\])/ or /(B\[\])/ or /(W\[..\])/ or /(W\[\])/ )
+	{
+#		print "\$1 = ", $1, "\n";
+		my $coord = $1;
+		if ( $coord =~ /B\[(.*?)\]/ )
+		{
+			$coord = $1;
+#			print "\$coord = $coord\n";
+			# Convert $1 - the coordinate - into gtp format and output 'black <coordinate>'
+			if ( $colour =~ /^black$/ ) { print "black ", sgf_to_gtp($boardsize, $coord), "\nshowboard\n"; }
+			else { print "genmove b\nshowboard\n"; }
+		}
+		elsif ( $coord =~ /W\[(.*?)\]/ )
+		{
+			$coord = $1;
+#			print "\$coord = $coord\n";
+			# Convert $1 - the coordinate - into gtp format and output 'white <coordinate>'
+			if ( $colour =~ /^white$/ ) { print "white ", sgf_to_gtp($boardsize, $coord), "\nshowboard\n"; }
+			else { print "genmove w\nshowboard\n"; }
+		}
+	}
+}
+
+close SGFINPUT;
+
+# Convert a two letter coordinate - origin top left
+# to letter.number coordinate origin bottom left.
+# Note: Sgf allows 'i', gtp does not.
+sub sgf_to_gtp {
+
+    my $size = shift;
+    my $board_coords = shift;
+
+#    print "\$board_coords = ", $board_coords, "\n";
+    
+    $board_coords =~ tr/A-Z/a-z/;
+    return "pass" if ($board_coords eq "" or $board_coords eq "tt");
+
+    my $sgffirst = substr($board_coords, 0, 1);
+    my $letter;
+    if ($sgffirst ge 'i') { $letter = chr(ord($sgffirst) + 1); }
+    else { $letter = $sgffirst; }
+    
+    my $sgfsecond = substr($board_coords, 1, 1);
+    my $number = $boardsize - (ord($sgfsecond) - ord('a'));
+    
+    return $letter . $number;
+}
+
+sub gtp_to_sgf {
+
+    my $size = shift;
+    my $board_coords = shift;
+    $board_coords =~ tr/A-Z/a-z/;
+    return "" if ($board_coords eq "pass");
+    my $first  = substr($board_coords, 0, 1);
+    my $number = substr($board_coords, 1);
+    my $sgffirst;
+    if ($first gt 'i') {
+      $sgffirst = chr(ord($first) - 1);
+    } else {
+      $sgffirst = $first;
+    }
+    my $sgfsecond = chr(ord('a') + $size - $number);
+    return $sgffirst . $sgfsecond;
+}

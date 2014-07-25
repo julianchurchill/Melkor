@@ -1,0 +1,289 @@
+#! /usr/bin/perl -w
+
+# Created: 26/2/5 by Julian Churchill
+
+# This script should be run as: 
+#	generateSafetyTrainingData.txt <list of sgf.tar.gz archives>
+
+# It does this:
+#  - Filter out 9x9 games with >40 moves from each specified .tar.gz containing sgf files.
+#  - Run GnuGo.exe on each qualifying game with the GTPSgfGetStatusInfo.txt gtp script to
+#    determine stone status at the end of the game.
+#  - Insert the status info into the sgf files as tags.
+#  - Place the resulting sgf files in a mirror directory of the NNGS/year/month/day/
+
+# GnuGo spews forth data in this format:
+#=101 [black|white] (winner)
+#
+#=102 Alive coords (multiline)
+#
+#=103 Dead coords (multiline)
+#
+#=104 Seki coords (multiline)
+#
+#=105 White territory coords (multiline)
+#
+#=106 Black territory coords (multiline)
+#
+#=107 Dame coords (multiline)
+
+package main;
+
+use strict;
+
+# Return 1 if the specified sgf is branched, 0 otherwise
+# $sgffilename
+sub sgfBranched ($) {
+	# Count '(;'s, more than one means it's got variations
+	# NOTE: This doesn't distinguish between '(;'s in comments and normal ones!
+	# (; indicates the start of a variation (including the main one)
+	my $sgffilename = shift;
+	open SGF, '<', $sgffilename;
+	my $openBrackets = 0;
+	while(<SGF>) {
+		while( /\(;/g ) { $openBrackets++; }
+		if( $openBrackets > 1) { last; }
+	}
+	close SGF;
+	
+	if($openBrackets > 1) {
+		#print "sgfBranched( $sgffilename ) returns 1\n";
+		return 1;
+	}
+	else {
+		#print "sgfBranched( $sgffilename ) returns 0\n";
+		return 0;
+	}
+}
+
+# Count how many move nodes exist in this sgf - includes branches if present
+# $sgffilename
+sub sgfMoveCount ($) {
+	my $sgffilename = shift(@_);
+	open SGF, '<', $sgffilename;
+	my $moveCount = 0;
+	
+	# Count occurences of B[ and W[
+	while(<SGF>) {
+		while ( /;[BW]\[/g ) { $moveCount++; }
+		#print $_, ": moveCount=$moveCount \n";
+	}
+	close SGF;
+	#print "sgfMoveCount( $sgffilename ) returns $moveCount\n";
+	return $moveCount;
+}
+
+# Taken from twogtp script from GnuGo source package
+sub standard_to_sgf {
+    my $size = shift;
+    my $board_coords = shift;
+    $board_coords =~ tr/A-Z/a-z/;
+    return "" if ($board_coords eq "pass");
+    my $first  = substr($board_coords, 0, 1);
+    my $number = substr($board_coords, 1);
+    my $sgffirst;
+    if ($first gt 'i') {
+      $sgffirst = chr(ord($first) - 1);
+    } else {
+      $sgffirst = $first;
+    }
+    my $sgfsecond = chr(ord('a') + $size - $number);
+#   print "$board_coords, $sgffirst, $number, $sgfsecond\n";
+    return $sgffirst . $sgfsecond;
+}
+
+# These must match the description above and the file GTPSgfGetStatusInfo.txt
+my $winnerCommandID = 101;
+my $aliveCommandID = 102;
+my $deadCommandID = 103;
+my $sekiCommandID = 104;
+my $whiteTerritoryCommandID = 105;
+my $blackTerritoryCommandID = 106;
+my $dameCommandID = 107;
+
+my $helpstring = "
+
+Run with:
+
+generateSafetyTrainingData.txt <list of sgf.tar.gz archives>
+";
+
+if (@ARGV<1) {
+	die "ERROR: No files specified. $helpstring";
+}
+
+my $nowtime = gmtime;
+print $nowtime, "\n";
+
+for my $sgfarchive (@ARGV) {
+	# check $sgfarchive is of the form *.tar.gz
+	print "Processing archive: $sgfarchive\n";
+	die "ERROR: Bad archive: $sgfarchive\n" unless $sgfarchive =~ /.+\.tar\.gz/;
+
+	# unzip it to temp
+	if( -e 'temp' ) { (system("rm -rf temp")==0) or die "rm -rf temp failed: $?"; }
+	mkdir 'temp' or die "mkdir temp failed: $?";
+	system("cp $sgfarchive temp") == 0
+		or die "ERROR: cp $sgfarchive temp failed: $?";
+
+	# remove path name from $sgfarchive
+	my ($year, $month, $day);
+	# $sgfarchive form should be : "NNGS/year/month/month-day-year.tar.gz"
+	if ($sgfarchive =~ /.+\/(.+\.tar\.gz)$/) { $sgfarchive = $1; };
+	($month, $day, $year) = ($sgfarchive =~ /(.+)-(.+)-(.+)\.tar\.gz$/);
+#	if ($sgfarchive =~ /.+\/(.+\.tar\.gz)$/) {
+#		$sgfarchive = $1;
+#		($month, $day, $year) = ($sgfarchive =~ /(.+)-(.+)-(.+)\.tar\.gz$/);
+#	}
+#	else { die "ERROR: $sgfarchive not in correct NNGS directory structure. $?\n"; }
+	
+	chdir 'temp' or die "ERROR: cd temp failed: $!";
+
+	if (system("tar -xzf $sgfarchive") != 0) {
+		print "tar -xzf $sgfarchive failed: $?\n";
+		system("rm -f $sgfarchive") == 0
+			or die "ERROR: rm -f $sgfarchive failed: $?\n";
+		chdir '..' or die "ERROR: cd .. failed: $!";
+		# delete temp directory and contents
+		system("rm -rf temp") == 0
+			or die "ERROR: rm -f temp failed: $?\n";
+		next;
+	}
+	system("rm -f $sgfarchive") == 0
+		or die "ERROR: rm -f $sgfarchive failed: $?\n";
+
+	# make sure they are all *.sgf if not then rename them all to .sgf files
+	my @files = glob('*');
+	for my $sgf (@files) {
+		# remove index file
+		if ($sgf =~ /^index\.*/) {
+			system("rm -f $sgf") ==0
+				or die "ERROR: rm -f $sgf failed: $?\n";
+		}
+		elsif (($sgf =~ /.+\.sgf/) == 0) { rename $sgf,"$sgf.sgf"; }
+	}
+
+	# Use gnugo to finish games to the point that it can determine
+	# reliably enough which stones are dead/alive/in seki and
+	# which points are territory for either side.
+	my $output = "../output.txt";
+	@files = glob('*');
+	for my $sgffile (@files)
+	{
+		# Accept only 9x9, non-branched games with more than 40 moves
+		print "Checking: $sgffile\n";
+		my $branched = sgfBranched $sgffile;
+		my $moveCount = sgfMoveCount $sgffile;
+		my $boardSize = 9;
+		open SGF, '<', $sgffile;
+		my $discard = 1;
+		while(<SGF>) {
+			#print $_, "\n";
+			if( /SZ\[$boardSize\]/ && !$branched && $moveCount >= 40) {
+				$discard = 0;
+				last;           # Escape the while loop
+			}
+		}
+		close SGF;
+		
+		# Skip this sgf if it failed the criteria
+		if($discard == 1) { next; }
+		print "* Updating: $sgffile\n";
+		
+		if( system("../GTPSgfGetStatusInfo.txt $sgffile | ../gnugo3-4.exe --quiet --mode gtp > $output")!=0) {
+			print "ERROR: gnugo.exe crashed... $?\n";
+			next;
+		}
+		
+		# Copy sgffile to a temporary one
+		(system("cp $sgffile temp.sgf")==0) or die "ERROR: $?\n";
+		
+		my $currentCommandID;
+		my $newTag = 0;
+		my $currPos = 0;
+		open IN, '<', $output;
+		# This is needed cos the sgfs get extracted in read-only mode ?!?!
+		(system("chmod a+wr $sgffile")==0) or die "ERROR: $?\n";
+		open ORIGINALSGF, '+<', $sgffile;        # Open for read '<' and write '+'
+
+		# Find insert point in SGF file, after the last move node: /[BW]\[.*]/
+		while(<ORIGINALSGF>) {
+			while( /[BW]\[.*?\]/g ) { $currPos = tell(ORIGINALSGF); }
+		}
+		
+		# Open temp.sgf and set the position to just after the last move node
+		(system("chmod a+wr temp.sgf")==0) or die "ERROR: $?\n";
+		open SGF, '+<', "temp.sgf";        # Open for read '<' and write '+'
+		seek(SGF, $currPos, 0);
+
+		# Incorporate the output from GnuGo into the sgf file
+		# Dead with cross (MA), seki with circle (CR), alive needs no mark.
+ 		# Black territory (TB), white territory (TW), dame needs no mark.
+		while(<IN>)	{
+			# Identify a new command id if one present in this line
+			if( /^=([0-9]+) / ) { 
+				$currentCommandID = $1;
+				$newTag = 1;
+				#print "\$currentCommandID = $currentCommandID\n";
+			}
+
+			# Read in coordinates on this line
+			while( /([a-zA-Z]\d\d?)/g ) {
+				#print "\$1 = $1\n";
+				my $sgfCoord = standard_to_sgf $boardSize, $1;
+
+				# Print a tag for the first coordinate of this type only
+				if( $newTag && $currentCommandID == $deadCommandID ) {	print SGF "MA"; }
+				elsif( $newTag && $currentCommandID == $sekiCommandID ) { print SGF "CR"; }
+				elsif( $newTag && $currentCommandID == $blackTerritoryCommandID ) { print SGF "TB"; }
+				elsif( $newTag && $currentCommandID == $whiteTerritoryCommandID ) { print SGF "TW"; }
+				$newTag = 0;
+				
+				# Output coordinate - don't print alive stones or dame points
+				if ( $currentCommandID != $aliveCommandID && $currentCommandID != $dameCommandID) {
+					print SGF "[$sgfCoord]";
+				}
+			}
+		}
+		close IN;
+		
+		# Now append what goes after the last move node from the original sgf
+		seek(ORIGINALSGF, $currPos, 0);     # Set the position to just after the last move node
+		while(<ORIGINALSGF>) { print SGF $_; };
+		
+		close ORIGINALSGF;
+		close SGF;
+		
+		# Now copy the new one over the original and delete the new
+		(system("rm -rf $sgffile")==0) or die "ERROR: $?\n";
+		(system("mv temp.sgf $sgffile")==0) or die "ERROR: $?\n";
+		
+		# Make sure mirror directories exist under SafetyTrainingData for year/month/day/
+		my $prebase = "../SafetyTrainingData";
+		mkdir "$prebase" unless -e "$prebase";
+		mkdir "$prebase/$year" unless -e "$prebase/$year";
+		mkdir "$prebase/$year/$month" unless -e "$prebase/$year/$month";
+		mkdir "$prebase/$year/$month/$day" unless -e "$prebase/$year/$month/$day";
+		my $base = "$prebase/$year/$month/$day/";
+		
+		# Copy the sgf file to our mirror directory structure and zip up again
+		my $tararchive;
+		if ($sgfarchive =~ /(.+\.tar)\.gz$/) { $tararchive = $1; }
+		if( -e "$base$sgfarchive" ) {
+			(system("gunzip $base$sgfarchive")==0) or die "ERROR: $?\n";
+			(system("tar -uf $base$tararchive $sgffile")==0) or die "ERROR: $?\n";
+			(system("gzip $base$tararchive")==0) or die "ERROR: $?\n";
+		}
+		else {
+			(system("tar -czf $base$sgfarchive $sgffile")==0) or die "ERROR: tar -czf $base$sgfarchive $sgffile $?\n";
+		}
+	}
+
+	chdir '..' or die "cd .. failed: $!";
+	# delete temp directory and contents
+	system("rm -rf temp") == 0
+		or die "ERROR: rm -f temp failed: $?\n";
+}
+
+$nowtime = gmtime;
+print $nowtime, "\n";

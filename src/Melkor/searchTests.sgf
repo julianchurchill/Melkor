@@ -1,0 +1,221 @@
+(;GM[1]FF[4]CA[UTF-8]AP[CGoban:2]ST[2]
+RU[Japanese]SZ[13]KM[0.00]
+GN[searchTests]PW[White]PB[Black]AW[aa][ba][bc]AB[da][ab]C[NOTE: Always make sure that the setup command is the last line in the comment. When you want a genetic search test to be run make sure you include the setup command in the node you want the test to start from and wrap the arguments in double quotes.
+
+** My test 1 - Short capture sequence **
+
+!testname "Short capture"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(0,0) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(0,0) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[b12\]"]PL[W]
+;B[bb]LB[bb:1]C[Solution: B[b12\] must be first move.]
+;AE[aa][ba][da][ab][bb][bc]AW[hg][ih][jh][gi][hi][fj][gj][fk]AB[gh][hh][fi][ii][ej][hj][gk]C[** Graded Go Problems 1 - Problem 39 **
+
+!testname "GG1-P39"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(5,9) maxPopulation=10 maxGenomeLength=15 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(5,9) maxDepth=15 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[f2\]"]PL[B]
+;B[fl]LB[fl:1]C[Solution: B[f2\] must be first move.]
+;AE[fl]AW[kc][ke][le][jf][kf][ig][jg][hh][ej][ek]AB[kd][je][if][lf][hg][kg][jh][fj]C[** Graded Go Problems 1 - Problem 87 **
+
+!testname "GG1-P87 Ladder"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(6,8) maxPopulation=10 maxGenomeLength=15 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(6,8) maxDepth=15 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[m10\]"]
+;B[ld]LB[ld:1]C[Solution: B[f2\] must be first move.]
+;AE[kc][kd][ld][je][ke][le][if][jf][kf][lf][ig][jg][kg][jh][fi][ej][fj][gj][ek][fk][gk]AW[hf][hg][gh][di][ii]AB[gg][fh][hh][hi]C[** Graded Go Problems 1 - Problem 88 **
+
+!testname "GG1-P88 Ladder"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(6,7) maxPopulation=10 maxGenomeLength=15 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(6,7) maxDepth=15 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[f5\]"]PL[B]
+;B[fi]LB[fi:1]C[Solution: B[f5\] must be first move.]
+;AE[hf][gg][hg][fh][gh][hh][ih][di][fi][gi][hi][ii][hj]AW[cb]AB[bb][cc]C[** My test 2 - 2nd line trap **
+
+!testname "2nd line trap"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(2,1) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(2,1) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[d12\]"]PL[B]
+;B[db]LB[db:1]C[Solution: B[d12\] must be first move.]
+;AE[bb][cb][db][cc]AW[ib][jb][kb][lb][hc][hd][jd][kd][ld][ie][ke][if][jf]AB[ic][jc][kc][lc][mc][id][he][hf][kf][jg][ih]C[** Graded Go Problems 2 - Problem 3 **
+Black to play and capture at least white string at J9. Minimal solution depth is 5.
+
+!testname "GG2-P3"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(8,4) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(8,4) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[j7\]W[k9\]|B[j7\]W[*\]B[k9\]"]PL[B]
+;AW[je]AB[le][ig]LB[je:2][le:3][ig:1]
+;AE[ib][lb][hc][ic][lc][mc][hd][ld][ke][le][if][jf][kf][ig][jg][ih]AW[ia][hb][gc][jc][gd][id][ge][he]AB[ka][fb][gb][kb][fc][fd][kd][fe][ie][je][gf]C[** Graded Go Problems 2 - Problem 43 **
+
+Black to play and capture at least white string at G11. Minimal solution depth is 5.
+
+!testname "GG2-P43"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(6,2) maxPopulation=10 maxGenomeLength=15 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(6,2) maxDepth=15 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[h11\]W[h10\]B[j11\]|B[h11\]W[*\]B[h10\]"]PL[B]
+;AW[hd]AB[hc][ic]LB[hc:1][ic:3][hd:2]
+;AE[ia][ka][fb][gb][hb][jb][kb][fc][gc][hc][ic][jc][kc][fd][gd][hd][id][jd][kd][fe][ge][he][ie][je][gf][hf]AW[bf][df][eg][bh][dh][eh][ci][di]AB[cg][dg][ch][bi][bj][cj][dj]C[** Graded Go Problems 2 - Problem 2 **
+
+Black to play.
+
+!testname "GG2-P2"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(1,7) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(1,7) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[b7\]"]
+;B[bg]LB[bg:1]
+;AE[bf][df][bg][cg][dg][eg][bh][ch][dh][eh][bi][ci][di][bj][cj][dj]AW[hb][ib][jb][ic][kc][dd][hd][kd][he][ie][jh]AB[gc][hc][jc][gd][id][jd][je][jf]C[** Graded Go Problems 2 - Problem 7 **
+
+Black to play.
+
+!testname "GG2-P7"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(7,3) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(7,3) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[g8\]"]PL[B]
+;B[gf]LB[gf:1]
+;AE[hb][ib][jb][gc][hc][ic][jc][kc][dd][gd][hd][id][jd][kd][he][ie][je][gf][jf][jh]AW[dg][ch][dh][bi][di][aj][cj][bk]AB[df][cg][eg][ah][bh][eh][ai][ei]C[** Graded Go Problems 2 - Problem 10 **
+
+Black to play.
+
+!testname "GG2-P10"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(3,6) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(3,6) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[d4\]W[c5\]B[c3\]W[b4\]B[b2\]|B[d4\]W[*\]B[c5\]|B[d4\]W[c5\]B[c3\]W[*\]B[b4\]"]PL[B]
+;AW[ci][bj]AB[dj][ck][bl]LB[ci:2][bj:4][dj:1][ck:3][bl:5]
+;AE[df][cg][dg][eg][ah][bh][ch][dh][eh][ai][bi][ci][di][ei][aj][bj][cj][dj][bk][ck][bl]AW[ea][fa][ia][cb][gb][hb][jb][cc][gc][jc][dd][ed][fd][jd]AB[da][db][eb][fb][ib][fc][ic][gd][hd]C[** Graded Go Problems 2 - Problem 13 **
+
+Black to play.
+
+!testname "GG2-P13"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(6,1) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(6,1) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[h13\]W[g13\]B[h11\]|B[h13\]W[*\]B[g13\]|B[h13\]W[*\]B[h11\]"]
+;B[ha]LB[ha:1]
+;AE[da][ea][fa][ha][ia][cb][db][eb][fb][gb][hb][ib][jb][cc][fc][gc][ic][jc][dd][ed][fd][gd][hd][jd]AW[dj][ej][ck][fk][gk][cl][gl][hl][il][cm][gm]AB[fj][gj][dk][ek][hk][ik][jk][dl][fl][jl][dm][em]C[** Graded Go Problems 2 - Problem 32 **
+
+Black to play.
+
+!testname "GG2-P32"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(6,10) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(6,10) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[j1\]"]PL[B]
+;B[im]LB[im:1]
+;AE[dj][ej][fj][gj][ck][dk][ek][fk][gk][hk][ik][jk][cl][dl][fl][gl][hl][il][jl][cm][dm][em][gm][im]AW[ea][ga][eb][fb][gb][ib][jb][gc][hc]AB[da][ka][db][kb][dc][ec][fc][ic][jc][kc][gd][hd]C[** Graded Go Problems 2 - Problem 35 **
+
+Black to play.
+
+!testname "GG2-P35"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(4,0) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(4,0) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[j13\]W[k13\]B[h12\]|B[j13\]W[*\]B[k13\]"]PL[B]
+;B[ia]LB[ia:1]
+;AE[da][ea][ga][ia][ka][db][eb][fb][gb][ib][jb][kb][dc][ec][fc][gc][hc][ic][gd][hd]AW[jd][kd][ld][md][je][jf][kf][mf][kg][mg][kh][lh]AB[lc][mc][id][ie][ke][le][me][if][ig][jh][mh][ii][ki][li][mi]C[** Graded Go Problems 2 - Problem 41 **
+
+Black to play.
+
+!testname "GG2-P41"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(9,3) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(9,3) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[m8\]W[m7\]B[m9\]|B[m8\]W[*\]B[m7\]"]PL[B]
+;B[lf]LB[lf:1]
+;AE[jc][kc][lc][mc][id][jd][kd][ld][md][ie][je][ke][le][me][if][jf][kf][lf][mf][ig][kg][mg][jh][kh][lh][mh][ii][ki][li][mi]AW[bg][ah][ch][bi][cj][ck][fk][cl]AB[ci][di][bj][dj][bk][dk]C[** Graded Go Problems 2 - Problem 68 **
+
+Black to play.
+
+!testname "GG2-P68"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(2,9) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(2,9) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[b2\]"]PL[B]
+;B[bl]LB[bl:1]
+;AE[bg][ah][ch][bi][ci][di][bj][cj][dj][bk][ck][dk][fk][bl][cl]AW[cb][cc][dd][ed][fd][gd][ce][ge][cf][gf][cg][fg][dh][fh][gh]AB[dc][ec][fc][gc][bd][cd][hd][de][he][df][hf][gg][hg]C[** Graded Go Problems 2 - Problem 70 **
+
+Black to play.
+
+!testname "GG2-P70"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(3,3) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(3,3) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[f8\]W[e8\]B[e9\]|B[f8\]"]PL[B]
+;B[ff]LB[ff:1]
+;AE[cb][cc][dc][ec][fc][gc][bd][cd][dd][ed][fd][gd][hd][ce][de][ge][he][cf][df][ff][gf][hf][cg][fg][gg][hg][dh][fh][gh]AW[jb][kb][jc][id][ie][le][jf][kf][lf][jh][ji][li][ij][jj]AB[kc][kd][ld][je][ke][me][if][ig][jg][ih][ii]C[** Graded Go Problems 2 - Problem 79 **
+
+Black to play.
+
+!testname "GG2-P79"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(9,5) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(9,5) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[m7\]"]PL[B]
+;B[lg]LB[lg:1]
+;AE[jb][kb][jc][kc][id][kd][ld][ie][je][ke][le][me][if][jf][kf][lf][ig][jg][lg][ih][jh][ii][ji][li][ij][jj]AW[bb][db][dc][fc][bd][cd][be][cf]AB[bc][cc][dd][ed][ce][ee][bf][ef]C[** Graded Go Problems 2 - Problem 86 **
+
+Black to play.
+
+!testname "GG2-P86"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(1,3) maxPopulation=10 maxGenomeLength=10 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(1,3) maxDepth=10 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[a10\]|B[a9\]"]PL[B]
+;B[ad]LB[ad:1]
+;AE[db][cc][dc][fc][ad][bd][cd][dd][ed][be][ce][ee][bf][cf][ef]AW[aa][ba][cb]AB[ca][da][ab][ac][ff]C[** Ladder 3 **
+
+Black to play.
+
+!testname "Ladder3"
+
+!setupGeneticSearch "time=60 nextToPlay=BLACK goal=C(0,0) maxPopulation=10 maxGenomeLength=15 pass=0.0 elitismRate=0.1 mutationRate=0.1 maxAttacksPN=4"
+
+!setupMTDFSearch "time=60 nextToPlay=BLACK goal=C(0,0) maxDepth=15 pass=0.0 prune=0.0 useNChildren=10"
+
+!answer "B[d12\]"]
+;B[db]LB[db:1])

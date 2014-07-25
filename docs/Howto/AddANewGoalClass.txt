@@ -1,0 +1,12 @@
+Created: 12/3/5 by Julian Churchill
+Last updated: 12/3/5
+
+How to add a new goal class
+---------------------------
+
+ 1. Create a class extending GoalInterface. Implement the virtual functions.
+ 2. Add a new type to the GoalInterface::GoalType enum.
+ 3. Add an entry into Goal::addGoal() so that it creates the correct object type
+    when adding to the meta goal. Include the new goal class header file in Goal.h.
+ 4. Add an entry into Goal::parseGoalString() to allow easy setup through GTP or
+    in commented SGF files for automated testing.

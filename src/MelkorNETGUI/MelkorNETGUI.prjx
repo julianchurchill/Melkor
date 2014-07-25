@@ -1,0 +1,33 @@
+<Project name="MelkorNETGUI" standardNamespace="MelkorNETGUI" description="" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\MainForm.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\MelkorWrapper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\SearchSettingsDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\NewDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\LogWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\MelkorNETGUI.SearchSettingsDialog.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name="..\MelkorNETGUI.MainForm.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name="..\MelkorNETGUI.NewDialog.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name="..\MelkorNETGUI.LogWindow.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="True" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="True" optimize="False" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="WinExe" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
+    <Execution commandlineparameters="" consolepause="False" />
+    <Output directory="..\bin\Debug" assembly="MelkorNETGUI" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="True" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="True" optimize="False" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="WinExe" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
+      <Execution commandlineparameters="" consolepause="False" />
+      <Output directory="..\bin\Debug" assembly="MelkorNETGUI" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+    </Configuration>
+    <Configuration runwithwarnings="True" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="WinExe" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
+      <Execution commandlineparameters="" consolepause="False" />
+      <Output directory="..\bin\Release" assembly="MelkorNETGUI" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+    </Configuration>
+  </Configurations>
+</Project>

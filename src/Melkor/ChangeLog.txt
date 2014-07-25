@@ -1,0 +1,154 @@
+Change Log for the Backend to Melkor
+------------------------------------
+
+ Version 0.6
+ -----------
+
+ Version 0.52-ESPM
+ -----------------
+ 
+ 9/4/5 - JC - Created Melkor-0-52-ESPM branch to work on the Eye Space Pattern Matcher.
+ 
+ Version 0.52
+ ------------
+ 
+ 7/4/5 - JC - Extracted a function to handle ttable lookup at the start of alphaBetaWithMemory()
+   called MTDFSearch::lookupTranspositionTableBounds().
+ 3/4/5 - JC - SearchSettings now stores a MoveSuggester pointer using SmartPtr. This means it
+   doesn't have to know of the existence of all MoveSuggester derived classes.
+ 2/4/5 - JC - Fixed a bug that stopped the colour of a Move being assigned properly during
+   construction.
+ 2/4/5 - JC - The Goal class no longer needs to know all the derivatives of GoalInterface.
+ 2/4/5 - JC - Fixed Test::AlphaBetaTest(). Now uses MoveSuggester and GoalInterface derived
+   classes to guide the search.
+ 1/4/5 - JC - Added SmartPtrs to hold GoalInterface pointers in Goal. This lets us keep 
+   reference counts, so we can have a Goal class that doesn't need to know all the possible 
+   GoalInterface derived classes. It just stores pointers created outside of itself. 
+   SmartPtrs are needed for memory management when Goal objects copy each other.
+     - For debugging see GoalInterfaceTest::testGoaInterfaceAssign().
+ 29/3/5 - JC - Removed all remaining Genetic Algorithm references from source. 
+ 28/3/5 - JC - Inlined SearchSettings functions.
+ 26/3/5 - JC - Upgraded GMF to v5.04. Now includes selective ladder search extensions.
+ 25/3/5 - JC - Upgraded to version 0.6. 
+
+ Version 0.5
+ -----------
+
+ 24/3/5 - JC - Tagged CVS so we have a stable tag to work from. The tag is "Melkor-0-5" where 
+   the format is <name>-<major_version>-<minor_version>.
+ 20/03/05 - JC - Made the BPNGoAdapterInterface.internalBPN* member allocate/deallocate itself so 
+   we don't have to supply a dodgy pointer every time we create a BPNGoAdapterInterface derived 
+   object. See also Melkor::loadBPN().
+ 20/03/05 - JC - Moved the changes to a ChangeLog and added to CVS.
+ 20/03/05 - JC - Removed AreaFinder references in code. 
+ 20/03/05 - JC - Written critical unit tests for BoardStruct and GoString.
+ 17/03/05 - JC - CppUnit is now used for unit testing - see docs/UnitTestingPolicy.txt.
+ D - The MTDFSearch expand functions are really a form of move suggester. They have been 
+     converted to classes derived from MoveSuggester.
+ D - GMF version change to v5.03.
+ D - Big sequence search prunes at 0.35f to try to keep the search speed down.
+ D - Rearranged some code from Misc into Go and Goal.
+ D - Updated the ladder tracing routine to include the case of a ladder with a 2nd order liberty
+     and a 2nd order liberty next to the board edge - which counts as a 3rd order liberty.
+ D - GMF version change to v5.02. Some dynamic depth calculation adjustments.
+ D - GMF version change to v5.01.
+ D - Updated the constants for calculating the dynamic depths for searches. 
+     See Melkor::calculateSearchDepths().
+ D - Stopped pruning the big moves, just ordering them and selecting the top n. Then the 
+     move worth calculations find if it's a move worth playing.
+ D - GMF version change to v5.0 - inline with Melkor's minor version.
+ D - Ladder reading tests added to Test.cpp, see Test::ladderTest().
+ D - Added to ladder eval so it can trace out the line of simple ladders and find blockers and so
+     evaluate as ALIVE or DEAD accordingly to match design doc in GlobalMoveFunction.txt.
+     Also see LadderReading.txt.
+ D - Upgraded to GMF v4.21influenceStatus3 to include the new search restriction changes.
+ D - Made loose tactical search expand include (for enemy colour) liberties of target colour 
+     strings that share at least 1 liberty with the target.
+ D - Loose tactical search now includes strings with 1-3 liberties to pick up from the ladder
+     search when they don't qualify.
+ D - Ladder searches now exclude 1-2 lib strings that share 1 or more libs with another friendly
+     string, since the potential for connection complicates the search and needs a more thorough
+     investigation.
+ D - Upgraded to GMF v4.20influenceStatus3 to include the influence sequence mentioned below
+     for assessing the worth of big moves.
+ D - Melkor::estimateWorthOfBigMoves() changed to use a sequence of big moves after adding
+     the big move to the board and comparing with the board state if the enemy plays the big move.
+     The big sequence search uses the Influence goal.
+ D - Upgraded GMF to v4.19influenceStatus3 - Ladder search is now separate and as defined in
+     GlobalMoveFunction.txt under the design docs except for detecting ladder blockers.
+     A loose tactical search has been created as described in GlobalMoveFunction.txt.
+ D - Dynamic depth for loose tactical search is now used.
+ D - Modified MTDFSearch::looseTacticalExpand() to include all liberties of adjacent enemy strings.
+ D - Upgraded GMF to v4.18influenceStatus3 - now does ladder search on strings with 3 or 
+     less liberties instead of 2.
+ D - Upgraded GMF to v4.17influenceStatus3 - now links strength of stones to their
+     initial influence strength for Melkor::estimateScore().
+ D - Performance monitoring scripts.
+     - Have setup a MelkorVsGNUGo directory with scripts to allow monitoring of performance
+       and comparison of different versions of GlobalMoveFunction.
+ D - Added option so that the amount of influence radiated from stones can be a proportion of
+     the possible total, related to the strength of those stones. See Misc::calculateInfluence().
+     I.e. initial_influence = max_influence * stone_strength
+ D - Quiet mode (-quiet) changed to direct all output to stderr rather than blocking.
+ D - Made newBPN9-7x7-optimum1.bpn the default net for Melkor.
+ D - Included time settings in SGF game info.
+
+ Version 0.4a
+ ------------
+ 
+ B - Causes KGS games to crash on 2nd game. Try these gtp commands in order:
+	 loadsgf MelkorBot-kiai.sgf | genmove w | boardsize 9 | clear_board
+	 - This bug is caused by bad handling of SGF node links between children and parents.
+ F - Fix is to not use vector<> to store SGFNode::children since vector<> reallocates memory
+     without telling us and so messes up our parent pointers.
+	 - Rewritten SGF code to use real doubly linked lists over vector<>.
+ B - Why does Melkor fail to identify small groups of dead stones at the end of a game?
+     - Time per move set to 1s seems to limit all searches to a depth of 1... shouldn't
+	   be that bad - maybe something funny is going on...
+ F - MTDFSearch was not having the 'timeRanOut' flag being reset between searches, therefore
+     after one search failed on time, all the following ones did even if there was time to spare.
+     'timeRanOut' flag is now reset when MTDFSearch::setTimeLimit() is called.
+ B - GUI will step through loaded SGFs but not played games when finished. Perhaps the DLL needs to
+     have some internal state parts updated, change from playing mode to SGF edit mode when game
+     is over?
+ F - Melkor needed updating to keep a constant updated internal SGF tree in GTPFunctions.cpp.
+ B - The global time limit per move was overridden when playing a timed game.
+ F - If a time limit per move was specified and a timed game was played 
+     (i.e. calculateTimePerMove()) then the lower of the two values _should_ be used.
+
+
+ D - Implemented kgs-genmove_cleanup GTP command. Stops passes being returned to allow disputes
+     over dead stones to be settled over KGS servers.
+ D - Written final_status_list and final_score, GTP2 standard commands.
+ D - Implemented time_left GTP command to allow time synchronisation particularly on servers.
+ D - Written a finalScore() function to be used at the end of games rather than estimateScore()
+     Uses calculateDynamicDepth() for 10 seconds limit and runs updateStringsStatus() then 
+     estimateScore().
+ D   - Also wrote DllFinalScore() function.
+
+ D - Moved internal SGF tree to Melkor object rather than GTPFunctions.
+ D - When low on time (i.e. time per move==1s) Melkor tends to pass because it can't get far enough
+     through the globalMoveSearch algorithm to get to the big move selection.
+     - If this happens and Melkor has not had a chance to score _any_ of the big moves,
+       it should just choose any big move as a last reort.
+ D - When Melkor is created the default search depths are set by calculateDynamicDepth()
+     using a 4 second time limit.
+ D - Added DllSetUseDynamicSearchDepth(), DllGetUseDynamicSearchDepth().
+ D - Written Melkor::calculateSearchDepths(). This allows dynamic search depths
+     to be calculated everytime we need to choose a move.
+		- Search depth is dependent on: time available, an estimate of the number of
+	  	ladder and L&D searches we will do this move, a constant to measure speed of the computer
+	  	i.e. time it takes to do 100,000 int multiplies.
+
+ D - Added DLL and GTP functions to set the white/black player names for internal SGF.
+ D - Added DLL function to set the SGF result string for internal SGF.
+ D - Added SGF saving.
+	 - See GTPFunctions::gtp_save_sgf() and DllSaveSGF().	
+ D - Changed Melkor's SGF handling so it always keeps an updated SGF tree within 
+     GTPFunctions.cpp.
+ D - Try design S3 (minimal input neurons), 7x7 and learning rate 0.01. See newBPN9-7x7-optimum1.bpn
+ D - Made sure time management is working and made it output its time allowed estimate
+     per move.
+ D - Add DllLogStart(filename) / DllLogStop() function to DLL.
+ D - Added DllSetVerbose(bool verbose).
+ D - Add DllGetVersionString() to return the current version number string of Melkor.

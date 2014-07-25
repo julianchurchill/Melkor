@@ -1,0 +1,57 @@
+Created: 25/2/5 by Julian Churchill
+Last updated: 28/2/5
+
+-------------------------------
+** Status Estimating Network **
+-------------------------------
+
+Status Estimating ANN - equates to a human players glancing approximation of a board state. Refinement of this estimate can be made if necessary through game tree search.
+
+ Benefits: This should avoid the need for most life/death status tree searches.
+
+ See thesis Chapter 6 - 6.3.3 Safety Estimating Networks.
+ See WinHonte (Dahl) and Golem (Enderton).
+
+Actions
+-------
+
+ - Test training on 9x9 games.
+ 	- Generate training, validation and test data
+P	 	- Collect unbranching 9x9 games with >40 moves from NNGS.
+P	 	- Use GNUGo to mark final status of stones in sgf.
+	 		- Dead with cross (MA), seki with circle (CR), alive needs no mark.
+	 		- Black territory (TB), white territory (TW), dame needs no mark.
+P	- Check TD(lambda) implementation and rewrite if necessary.
+P		- Write TDBPNTrainer::trainPattern() and test it.
+	- Update TD test in Test.cpp if necessary.
+	- Write Safety network class - discard and purge old Safety network classes.
+P		- Safety1BPNGoAdapter (getInput())
+T		- Safety1BPNGoTrainer (extractPairs()).
+	- Rewrite BPNGoAdapterInterface::safetyTest() used to monitor safety net performance.
+ 	- Create a small test training database (200-400 games) using Safety1BPNGoTrainer.
+	- Start training and validation and link to a results spreadsheet with graph.
+ 
+Training
+--------
+
+ - TD(lambda)
+ - Training data:
+ 	- Collect unbranching 9x9 games with >40 moves from NNGS.
+ 	- Use GNUGo to mark final status of stones in sgf.
+ 		- Dead with cross (MA), seki with circle (CR), alive needs no mark.
+ 		- Black territory (TB), white territory (TW), dame needs no mark.
+ 	- * Store status info in the _last_ move node.
+ 	- Completed games with all dead stones marked, all others assumed alive including seki.
+ 	- Create training set from marked games.
+ 	- Try a repeated fixed-size set.
+ 	- Training output value - Should we decrease it over time or leave it at ALIVE or DEAD?
+ 		- Try keeping it static...
+ - Input scheme:
+ 	- How do we indicate the target string? (see WinHonte and Golem)
+ 	- 3 state (OURCOLOUR, THEIRCOLOUR, EMPTY).
+ 	- No. stones in target string. (How to indicate - binary or linear?, Is it necessary?
+ 	- No. liberties of target string. (1, 2, 3, >=4)
+ 	- No. eyes of target string. (0, 1, >=2)
+ - Output scheme:
+ 	- 1 neuron where 0 >= x <= 1
+ 	  0 representing dead, 1 alive, a value in between represents an estimate of safety.

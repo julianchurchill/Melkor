@@ -1,0 +1,109 @@
+Created: 2/3/5 by Julian Churchill
+Last updated: 4/3/5
+
+********************************
+** Global Move Function (GMF) **
+********************************
+
+ Relevant source code:
+   Melkor::getBestGlobalMove().
+
+ The global move function follows this process:
+ 
+ 1. Update status of all affected strings after adding the last played move.
+ 2. Estimate worth of urgent moves found during 1.
+ 3. Determine big moves.
+ 4. Determine worth of big moves.
+ 5. Play the move which is worth the most.
+
+
+--------------------
+* 1. Status Update *
+--------------------
+ 
+Available Mechanisms
+--------------------
+
+  To determine the status of a string there are several layers to filter through:
+  
+  a) Does the string qualify for a ladder search? 1-2 liberties, no shared friendly 
+     liberties.
+  b) Does it qualify for an influence safety estimate? 1-3 stones, no shared friendly 
+     liberties.
+  c) Does it qualify for a loose tactical search? 1-3 liberties.
+  d) Does it qualify for a full tactical search? 4-5 liberties.
+  e) If none of the above, skip the string.
+  
+  If the string has a small number of stones (1-3), doesn't share a liberty with another friendly 
+  string, i.e. potential connection then an estimate of the status is made by looking at the 
+  enemy influence over the string's liberties. Otherwise a tactical search must be made.
+
+  Three classes of tactical search are available. The ladder search for 1-2 liberty strings with
+  no shared friendly liberties, the loose tactical search for 3 liberty strings and the full 
+  tactical search for 4-5 liberty strings. Strings with higher liberty counts are not subject 
+  to status searches.
+  
+  Generally the searches must be performed with each player going first. This allows us to
+  decide if the status of a string depends on who is next to play and is therefore URGENT.
+  
+  Ladder Search (See LadderReading.txt)
+  -------------
+  
+  Target: 1-2 liberty strings, no shared friendly liberties.
+  Goal: Target to have >=3 liberties. Also eval can return ALIVE or DEAD based on reading out
+        of ladder to find blockers, if position is appropriate (to be implemented).
+  Expand Candidates: 
+    Target Colour: Liberties of target string and moves to capture adjacent enemy strings.
+    Enemy Colour:  Liberties of target string.
+
+  Loose Tactical Search
+  ---------------------
+  
+  Target: 1-3 liberty strings.
+  Goal: ALIVE/DEAD or depth/time limit.
+  Expand Candidates:
+    Target Colour: Liberties of target string and liberties of adjacent enemy strings.
+    Enemy Colour:  Liberties of target string and liberties of target colour strings that
+                   share at least 1 liberty with the target.
+
+  Full Tactical Search (Life And Death Search)
+  --------------------
+  
+  Target: 4-5 liberty strings.
+  Goal: ALIVE/DEAD or depth/time limit.
+  Expand Candidates: As captureExpand().
+
+  
+-------------------------------------
+* 2. Estimate Worth of Urgent Moves *
+-------------------------------------
+
+ These are generated during the status update after a move has occured. They include moves where
+ the first person to play determines the life or death of a string.
+
+
+--------------------------
+* 3. Determine Big Moves *
+--------------------------
+
+
+----------------------------------
+* 4. Estimate Worth of Big Moves *
+----------------------------------
+
+ Big moves are dealt with according to the following process:
+ 
+ 1. Iterate through the selected big moves.
+ 2. Add the big move to the board and run an influence search on the board.
+ 3. Add the enemy's best line of play according to the influence search.
+ 4. Update the status of all strings on the board.
+ 5. Estimate the score.
+ 6. Repeat 2-5 with the enemy playing this big move, adding our best line of play in 3.
+ 7. The worth of this big move is (score if we play the big move) - (score if enemy plays it).
+ 8. Repeat for all big moves.
+
+ 
+---------------------------
+* 5. Select the Best Move *
+---------------------------
+

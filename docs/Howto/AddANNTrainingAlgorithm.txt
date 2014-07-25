@@ -1,0 +1,25 @@
+Created: 27/2/5 by Julian Churchill
+Last updated: 28/2/5
+
+How to create a BPN-based Neural Network
+----------------------------------------
+
+ 1. Choose a training algorithm + class from : BPNTrainer, RPROPBPNTrainer, RBFBPNTrainer
+    TDBPNTrainer,
+    or define a new training algorithm, by creating a class derived from BPNTrainer.h
+    and rewriting trainPattern(). Add to the TRAINERTYPE enum in globals.h.
+ 2. Create a Go adapter class derived from BPNGoAdapterInterface and override
+    getInput() to translate relevant info from a Go board position to native NN input.
+ 3. Create a Go trainer class derived from BPNGoTrainerInterface and override
+    extractPairs() and extractPairsFromDirectory() to translate sgf files to training data
+    using getInput from the Go adapter defined in 2.
+ 4. Optionally a test function in BPNGoAdapterInterface should be specified to monitor
+    the training progress of the network. See rankTest(), localRankTest(), urgencyTest()
+    for examples.
+
+ 5. Add options to create a network of the Go adapter type created in 2, if not already 
+    in CreateNet project.
+ 6. Add options to test a network of the Go adapter type created in 2, if not already 
+    in TestNet project.
+ 7. Add selection options for it into the Trainnet project. Command line options
+    and an entry in createAdapterAndTrainer(). Add new trainer class option *BPNTrainer.

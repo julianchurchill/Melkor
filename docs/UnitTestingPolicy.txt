@@ -1,0 +1,21 @@
+Created: 18/3/5 by Julian Churchill
+Last updated: 18/3/5
+
+*************************
+** Unit Testing Policy **
+*************************
+
+ Unit testing should be performed after every compilation to maintain the integrity of previous
+work and to allow quick recognition of bugs and other potential problems. For C++ projects the
+CppUnit framework should be used (http://cppunit.sourceforge.net/). A mirror of the source 
+directory structure should be held in src/Test for unit test classes. For programs that can handle
+command line arguments a '-mode unit_test' option must be made available which forces a run of
+all available unit tests related to that project and then exits with a non-zero return value
+if any fail, zero otherwise.
+
+ When to Write Unit Tests
+ ------------------------
+
+ 1. Complex or critical functions/classes should always be accompanied by appropriate unit tests.
+ 2. When bugs occur, a unit test should be written immediately to cover that case.
+ 3. For functions/classes not covered by 1, unit tests should be written as time allows.
